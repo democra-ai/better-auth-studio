@@ -1,0 +1,39 @@
+name: Sync fork with upstream
+
+# Keeps democra-ai/better-auth-studio up to date with Kinfe123/better-auth-studio.
+# Uses the server-side "merge-upstream" API (the same thing the "Sync fork" button calls),
+# so it is NOT blocked by the workflow-scope restriction that git-push based syncs hit
+# when upstream changes .github/workflows/*. Runs on a schedule and on demand.
+
+on:
+  schedule:
+    - cron: "27 6 * * *"   # daily, 06:27 UTC
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sync-upstream
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Merge upstream into master
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          echo "Before:"
+          gh api "repos/Kinfe123/better-auth-studio/compare/master...democra-ai:master" \
+            --jq '"  behind_by=\(.behind_by)  ahead_by=\(.ahead_by)  status=\(.status)"' || true
+
+          resp=$(gh api -X POST repos/${{ github.repository }}/merge-upstream \
+                   -f branch=master 2>&1) || true
+          echo "merge-upstream: $resp"
+
+          echo "After:"
+          gh api "repos/Kinfe123/better-auth-studio/compare/master...democra-ai:master" \
+            --jq '"  behind_by=\(.behind_by)  status=\(.status)"' || true

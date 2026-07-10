@@ -72,7 +72,7 @@
     "@noble/hashes": "^2.0.1",
     "@number-flow/react": "^0.5.10",
     "@types/chokidar": "^2.1.7",
-    "better-auth": "1.4.5",
+    "better-auth": "1.6.23",
     "bumpp": "^10.2.3",
     "c12": "^3.3.2",
     "chalk": "^5.3.0",
@@ -99,13 +99,16 @@
     "supertest": "^7.1.4",
     "tsx": "^4.6.0",
     "typescript": "^5.3.2",
-    "vitest": "^1.6.1"
+    "vitest": "^3.2.6"
   },
   "engines": {
     "node": ">=18.0.0"
   },
   "pnpm": {
     "overrides": {
+      "vitest>vite": "^6.4.3",
+      "vite-node>vite": "^6.4.3",
+      "@vitest/mocker>vite": "^6.4.3",
       "qs": ">=6.14.1",
       "@remix-run/router": ">=1.23.2",
       "devalue": ">=5.6.2",
